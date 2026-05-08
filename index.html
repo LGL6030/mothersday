@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>母亲节 · 给妈妈</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'PingFang SC', 'Noto Serif SC', 'STSong', 'Songti SC', 'Microsoft YaHei', serif;
+            background: #1a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            cursor: default;
+            transition: background 1.2s ease;
+        }
+
+        body.ending-mode {
+            background: #fce4ec;
+        }
+
+        /* ========== 背景层 ========== */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, #2d1520 0%, #1a0a0f 50%, #0d0408 100%);
+            z-index: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        body.ending-mode .bg-layer {
+            opacity: 0;
+        }
+
+        /* ========== 萤火光点 ========== */
+        .firefly-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        body.ending-mode .firefly-container {
+            opacity: 0;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #ffb8c6;
+            box-shadow: 0 0 6px 3px rgba(255, 184, 198, 0.5),
+                        0 0 20px 8px rgba(255, 154, 162, 0.25),
+                        0 0 40px 12px rgba(255, 120, 140, 0.1);
+            animation: fireflyFloat ease-in-out infinite;
+        }
+
+        @keyframes fireflyFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(40px, -50px) scale(1.6);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translate(-20px, -90px) scale(0.8);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(-50px, -40px) scale(1.4);
+                opacity: 0.8;
+            }
+        }
+
+        /* ========== 封面层 ========== */
+        .cover-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1, #ec407a);
+            background-size: 400% 400%;
+            animation: coverGradient 8s ease infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        visibility 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cover-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        @keyframes coverGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .cover-petals {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .cover-petal {
+            position: absolute;
+            top: -40px;
+            animation: coverPetalFall linear forwards;
+            font-size: 22px;
+            opacity: 0.7;
+        }
+
+        @keyframes coverPetalFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(105vh) rotate(540deg);
+                opacity: 0;
+            }
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .cover-title {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            color: #fff;
+            text-shadow: 0 2px 20px rgba(180, 30, 70, 0.3);
+            letter-spacing: 0.06em;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            animation: coverTitleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes coverTitleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .cover-btn {
+            padding: 16px 48px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 1.15rem;
+            letter-spacing: 0.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: inherit;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            animation: coverBtnPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes coverBtnPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+            50% { box-shadow: 0 0 30px 8px rgba(255,255,255,0.2); }
+        }
+
+        .cover-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: #fff;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 40px rgba(200, 50, 80, 0.25);
+            animation: none;
+        }
+
+        .cover-btn:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        .cover-heart {
+            font-size: 50px;
+            animation: coverHeartBeat 1.3s ease-in-out infinite;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        @keyframes coverHeartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.2); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+            60% { transform: scale(1); }
+        }
+
+        /* ========== 文字展示层 ========== */
+        .text-stage {
+            position: relative;
+            z-index: 10;
+            width: 85%;
+            max-width: 700px;
+            text-align: center;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .text-stage.fading-out {
+            opacity: 0;
+        }
+
+        .blessing-display {
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .blessing-line {
+            font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+            color: #f8d5df;
+            line-height: 2;
+            letter-spacing: 0.08em;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            white-space: pre-line;
+        }
+
+        .blessing-line.entering {
+            opacity: 0;
+            filter: blur(18px);
+            transform: translateY(18px) scale(0.96);
+        }
+
+        .blessing-line.visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0) scale(1);
+        }
+
+        .blessing-line.exiting {
+            opacity: 0;
+            filter: blur(22px);
+            transform: translateY(-14px) scale(0.95);
+        }
+
+        /* ========== 底部导航区 ========== */
+        .nav-zone {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            transition: opacity 0.8s ease;
+        }
+
+        .nav-zone.fading-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .progress-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 184, 198, 0.25);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .progress-dot.active {
+            background: #ffb8c6;
+            width: 20px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(255, 184, 198, 0.5);
+        }
+
+        .progress-dot:hover {
+            background: rgba(255, 184, 198, 0.5);
+            transform: scale(1.3);
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid rgba(255, 184, 198, 0.3);
+            color: rgba(255, 200, 210, 0.8);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.4s ease;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(255, 184, 198, 0.7);
+            color: #fff;
+            background: rgba(255, 184, 198, 0.1);
+            box-shadow: 0 0 30px rgba(255, 160, 180, 0.2);
+            transform: scale(1.06);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.94);
+            transition: transform 0.1s ease;
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ========== 顶部提示 ========== */
+        .top-hint {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            font-size: 0.8rem;
+            color: rgba(255, 200, 210, 0.35);
+            letter-spacing: 0.3em;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .top-hint.fading-out {
+            opacity: 0;
+        }
+
+        /* ========== 结尾画面 ========== */
+        .ending-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .ending-overlay.visible {
+            opacity: 1;
+        }
+
+        .ending-petals {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .ending-petal {
+            position: absolute;
+            top: -40px;
+            animation: endingPetalFall linear forwards;
+            font-size: 22px;
+        }
+
+        @keyframes endingPetalFall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg) scale(0.4);
+                opacity: 0;
+            }
+        }
+
+        .ending-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 30px;
+        }
+
+        .ending-line {
+            font-size: clamp(1.3rem, 3vw, 1.9rem);
+            color: #c2185b;
+            line-height: 2;
+            letter-spacing: 0.06em;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            white-space: pre-line;
+        }
+
+        .ending-overlay.visible .ending-line {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ending-line .highlight {
+            color: #d81b60;
+            font-weight: bold;
+            font-size: 1.15em;
+        }
+
+        .ending-signature {
+            margin-top: 35px;
+            font-size: 1rem;
+            color: #ad1457;
+            letter-spacing: 0.08em;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s;
+            white-space: pre-line;
+            line-height: 1.8;
+        }
+
+        .ending-overlay.visible .ending-signature {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ending-hearts {
+            margin-top: 30px;
+            font-size: 36px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.2s;
+        }
+
+        .ending-overlay.visible .ending-hearts {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 500px) {
+            .nav-zone {
+                bottom: 40px;
+                gap: 20px;
+            }
+            .nav-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+            .top-hint {
+                top: 25px;
+                font-size: 0.7rem;
+            }
+            .ending-signature {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== 封面 ========== -->
+<div class="cover-overlay" id="coverOverlay">
+    <div class="cover-petals" id="coverPetals"></div>
+    <div class="cover-content">
+        <span class="cover-heart">💝</span>
+        <p class="cover-title">亲爱的妈妈，<br>准备好拆开惊喜了嘛？</p>
+        <button class="cover-btn" id="coverBtn">✨ 我们现在出发 ✨</button>
+    </div>
+</div>
+
+<!-- 背景 -->
+<div class="bg-layer"></div>
+
+<!-- 萤火光点 -->
+<div class="firefly-container" id="fireflyContainer"></div>
+
+<!-- 顶部提示 -->
+<div class="top-hint" id="topHint">轻轻点击 · 慢慢诉说</div>
+
+<!-- 文字展示 -->
+<div class="text-stage" id="textStage">
+    <div class="blessing-display">
+        <p class="blessing-line entering" id="blessingLine"></p>
+    </div>
+</div>
+
+<!-- 底部导航 -->
+<div class="nav-zone" id="navZone">
+    <button class="nav-btn" id="btnPrev" title="上一句">
+        <svg viewBox="0 0 24 24">
+            <polyline points="15 4 7 12 15 20"/>
+        </svg>
+    </button>
+
+    <div class="progress-indicator" id="progressIndicator"></div>
+
+    <button class="nav-btn" id="btnNext" title="下一句">
+        <svg viewBox="0 0 24 24">
+            <polyline points="9 4 17 12 9 20"/>
+        </svg>
+    </button>
+</div>
+
+<!-- ========== 结尾画面 ========== -->
+<div class="ending-overlay" id="endingOverlay">
+    <div class="ending-petals" id="endingPetals"></div>
+    <div class="ending-content">
+        <p class="ending-line">
+            那么，<br>祝我亲爱的妈妈<br><span class="highlight">永远十八，工作顺利！</span>
+        </p>
+        <p class="ending-signature">
+            —— 还在广州的儿子：<strong>黎广霖</strong>
+            2026年5月10日
+        </p>
+        <div class="ending-hearts">💖🌸💖</div>
+    </div>
+</div>
+
+<script>
+    // ========== 祝福语列表 ==========
+    const blessings = [
+        "妈妈，\n很高兴能用这种全新的形式\n在母亲节这天为您送上最温暖的祝福。",
+        "时光荏苒，\n一眨眼，\n您已陪我度过了19个春夏秋冬。",
+        "19年，\n我逐渐成长为一个壮年,\n而您的头上却也多出了一根根岁月的痕迹。",
+        "我是多么希望岁月可以手下留情啊，\n把时间还给那个我心中最伟大的女人。",
+        "您常说我很恋家，\n其实还不是孩子的心中常挂念着母亲嘛😄。",
+        "妈妈厨房里飘出的香味，\n微信里的每一句叮嘱\n都是跨越时间和距离的长桥\n始终母子连心。",
+        "您笑起来的时候，\n眼睛里藏着一整个春天。",
+        "您的每一次奔走送货，\n每一次毫不犹豫给我买衣服而自己却不舍得买，\n孩子永远记在心中。",
+        "妈妈，\n平日的生活里一定要注意自己的身体啊！\n多吃一些补品，多给自己花点钱\n我希望我的妈妈永远健康！",
+        "我在外面也会好好照顾自己的，\n请您放心！",
+        "感谢您19年来无私的付出，\n点亮了我绚丽的童年和青春。",
+        "做你的孩子，\n是我这辈子抽到的最好的签。",
+        "永远爱您，\n我最伟大的妈妈",
+    ];
+
+    let currentIndex = 0;
+    let isAnimating = false;
+    let hasReachedEnd = false;
+
+    // ========== DOM 元素 ==========
+    const blessingLine = document.getElementById('blessingLine');
+    const progressIndicator = document.getElementById('progressIndicator');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const coverOverlay = document.getElementById('coverOverlay');
+    const coverPetalsContainer = document.getElementById('coverPetals');
+    const coverBtn = document.getElementById('coverBtn');
+    const textStage = document.getElementById('textStage');
+    const navZone = document.getElementById('navZone');
+    const topHint = document.getElementById('topHint');
+    const endingOverlay = document.getElementById('endingOverlay');
+    const endingPetalsContainer = document.getElementById('endingPetals');
+
+    // ========== 萤火光点 ==========
+    function createFireflies() {
+        const container = document.getElementById('fireflyContainer');
+        const count = 25;
+        for (let i = 0; i < count; i++) {
+            const firefly = document.createElement('div');
+            firefly.className = 'firefly';
+            firefly.style.left = Math.random() * 90 + '%';
+            firefly.style.top = Math.random() * 80 + '%';
+            firefly.style.animationDuration = (Math.random() * 8 + 7) + 's';
+            firefly.style.animationDelay = Math.random() * 6 + 's';
+            container.appendChild(firefly);
+        }
+    }
+
+    // ========== 封面花瓣 ==========
+    function createCoverPetal() {
+        const petal = document.createElement('span');
+        const types = ['🌸', '💮', '🌷', '✿', '🌺', '💐', '🏵️'];
+        petal.textContent = types[Math.floor(Math.random() * types.length)];
+        petal.className = 'cover-petal';
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDuration = (Math.random() * 5 + 4) + 's';
+        petal.style.animationDelay = Math.random() * 2 + 's';
+        petal.style.fontSize = (Math.random() * 18 + 14) + 'px';
+        coverPetalsContainer.appendChild(petal);
+        setTimeout(() => petal.remove(), 7000);
+    }
+
+    let coverPetalInterval;
+    function startCoverPetals() {
+        for (let i = 0; i < 12; i++) {
+            setTimeout(() => createCoverPetal(), i * 250);
+        }
+        coverPetalInterval = setInterval(createCoverPetal, 1200);
+    }
+
+    // ========== 结尾花瓣 ==========
+    function createEndingPetal() {
+        const petal = document.createElement('span');
+        const types = ['🌸', '💮', '🌷', '✿', '🌺', '💐', '🏵️', '💖'];
+        petal.textContent = types[Math.floor(Math.random() * types.length)];
+        petal.className = 'ending-petal';
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDuration = (Math.random() * 6 + 5) + 's';
+        petal.style.animationDelay = Math.random() * 2 + 's';
+        petal.style.fontSize = (Math.random() * 20 + 16) + 'px';
+        endingPetalsContainer.appendChild(petal);
+        setTimeout(() => petal.remove(), 9000);
+    }
+
+    let endingPetalInterval;
+    function startEndingPetals() {
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => createEndingPetal(), i * 200);
+        }
+        endingPetalInterval = setInterval(createEndingPetal, 1000);
+    }
+
+    // ========== 进度点 ==========
+    function createProgressDots() {
+        blessings.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = 'progress-dot' + (i === 0 ? ' active' : '');
+            dot.addEventListener('click', () => {
+                if (i !== currentIndex && !isAnimating && !hasReachedEnd) {
+                    switchTo(i);
+                }
+            });
+            progressIndicator.appendChild(dot);
+        });
+    }
+
+    function updateProgressDots() {
+        const dots = progressIndicator.querySelectorAll('.progress-dot');
+        dots.forEach((dot, i) => {
+            dot.className = 'progress-dot' + (i === currentIndex ? ' active' : '');
+        });
+    }
+
+    // ========== 切换文字 ==========
+    function switchTo(index) {
+        if (isAnimating || index === currentIndex || hasReachedEnd) return;
+        isAnimating = true;
+
+        blessingLine.classList.remove('visible');
+        blessingLine.classList.add('exiting');
+
+        setTimeout(() => {
+            blessingLine.textContent = blessings[index];
+            blessingLine.classList.remove('exiting');
+            blessingLine.classList.add('entering');
+            currentIndex = index;
+            updateProgressDots();
+
+            void blessingLine.offsetWidth;
+            blessingLine.classList.remove('entering');
+            blessingLine.classList.add('visible');
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, 850);
+        }, 600);
+    }
+
+    function nextBlessing() {
+        if (hasReachedEnd) return;
+        const next = currentIndex + 1;
+
+        // 判断是否到最后一条
+        if (next >= blessings.length) {
+            triggerEnding();
+            return;
+        }
+
+        switchTo(next);
+    }
+
+    function prevBlessing() {
+        if (hasReachedEnd) return;
+        const prev = (currentIndex - 1 + blessings.length) % blessings.length;
+        switchTo(prev);
+    }
+
+    // ========== 结尾动画 ==========
+    function triggerEnding() {
+        if (hasReachedEnd) return;
+        hasReachedEnd = true;
+
+        // 1. 先让当前文字淡出
+        blessingLine.classList.remove('visible');
+        blessingLine.classList.add('exiting');
+
+        // 2. 同时让 UI 元素渐隐
+        setTimeout(() => {
+            textStage.classList.add('fading-out');
+            navZone.classList.add('fading-out');
+            topHint.classList.add('fading-out');
+        }, 300);
+
+        // 3. 背景渐变切换 + 结尾画面浮现
+        setTimeout(() => {
+            document.body.classList.add('ending-mode');
+            endingOverlay.classList.add('visible');
+            startEndingPetals();
+        }, 800);
+    }
+
+    // ========== 封面点击出发 ==========
+    coverBtn.addEventListener('click', () => {
+        coverOverlay.classList.add('hidden');
+        clearInterval(coverPetalInterval);
+
+        // 封面关闭后触发第一句浮现
+        setTimeout(() => {
+            blessingLine.classList.remove('entering');
+            blessingLine.classList.add('visible');
+        }, 300);
+    });
+
+    // ========== 事件绑定 ==========
+    btnNext.addEventListener('click', nextBlessing);
+    btnPrev.addEventListener('click', prevBlessing);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') nextBlessing();
+        if (e.key === 'ArrowLeft') prevBlessing();
+    });
+
+    // 触屏滑动
+    let touchStartX = 0;
+    let touchEndX = 0;
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', (e) => {
+        if (hasReachedEnd) return;
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 60) {
+            if (diff > 0) nextBlessing();
+            else prevBlessing();
+        }
+    });
+
+    // ========== 初始化 ==========
+    function init() {
+        createFireflies();
+        createProgressDots();
+        startCoverPetals();
+        blessingLine.textContent = blessings[0];
+        blessingLine.classList.add('entering');
+    }
+
+    init();
+</script>
+</body>
+</html>
